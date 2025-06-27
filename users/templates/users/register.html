@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tourist Guide - Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Fullscreen Layout */
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f7;
+    }
+    /* Hero Section */
+    .hero-section {
+      background: url('{% static "img/Quetta.jpg" %}') no-repeat center center/cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .hero-content {
+      position: relative;
+      text-align: center;
+      max-width: 700px;
+      padding: 2rem;
+      border-radius: 15px;
+      z-index: 1;
+    }
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      letter-spacing: 2px;
+      animation: fadeInUp 1.5s ease-in-out;
+    }
+    .hero-subtitle {
+      font-size: 1.6rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+      animation: fadeInUp 2s ease-in-out;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Form Section */
+    .form-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 2rem 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-top: -10rem;
+      z-index: 1;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-control {
+      border-radius: 30px;
+      border: 1px solid #ddd;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .form-control:focus {
+      border-color: #27ae60;
+      box-shadow: 0 0 8px rgba(39,174,96,0.5);
+    }
+    .form-label {
+      font-weight: bold;
+      color: #3a539b;
+      margin-bottom: 0.5rem;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #27ae60, #3a539b);
+      color: white;
+      font-size: 1.2rem;
+      padding: 0.75rem;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(90deg, #3a539b, #27ae60);
+      transform: translateY(-3px);
+    }
+    .btn-reset {
+      background: #fff;
+      border: 2px solid #27ae60;
+      color: #27ae60;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      padding: 0.75rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    .btn-reset:hover {
+      background: #27ae60;
+      color: #fff;
+      transform: translateY(-3px);
+    }
+    .form-footer {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .form-footer a {
+      color: #27ae60;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .form-footer a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.5rem; }
+      .hero-subtitle { font-size: 1.2rem; }
+      .form-container { width: 100%; padding: 1.5rem; margin-top: -5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Join Our Adventure</h1>
+      <p class="hero-subtitle">Sign up now to explore the best tourist destinations in Pakistan and experience unforgettable journeys.</p>
+    </div>
+  </div>
+
+  <!-- Registration Form Section -->
+  <div class="container mt-5 d-flex justify-content-center">
+    <div class="form-container col-md-8 col-12">
+      <h2 class="text-center mb-4" style="color: #3a539b;">Create Your Account</h2>
+
+      <!-- Display Django messages and form errors -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+      {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ form.errors }}
+        </div>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+          <!-- Username -->
+          <div class="col-md-6">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username">
+          </div>
+          <!-- Email -->
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+          </div>
+          <!-- First Name -->
+          <div class="col-md-6">
+            <label for="first_name" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name">
+          </div>
+          <!-- Last Name -->
+          <div class="col-md-6">
+            <label for="last_name" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name">
+          </div>
+          <!-- Mobile Number -->
+          <div class="col-md-6">
+            <label for="mobile_number" class="form-label">Mobile Number</label>
+            <input type="text" class="form-control" id="mobile_number" name="mobile_number" placeholder="Enter your mobile number">
+          </div>
+          <!-- Nationality -->
+          <div class="col-md-6">
+            <label for="nationality" class="form-label">Nationality</label>
+            <input type="text" class="form-control" id="nationality" name="nationality" placeholder="Enter your nationality">
+          </div>
+          <!-- City -->
+          <div class="col-md-6">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city">
+          </div>
+          <!-- Postal Address -->
+          <div class="col-md-6">
+            <label for="postal_address" class="form-label">Postal Address</label>
+            <textarea class="form-control" id="postal_address" name="postal_address" placeholder="Enter your postal address" rows="2"></textarea>
+          </div>
+          <!-- Preferred Travel Season -->
+          <div class="col-md-6">
+            <label for="preferred_season" class="form-label">Preferred Travel Season</label>
+            <select class="form-select" id="preferred_season" name="preferred_season">
+              <option selected disabled>Choose...</option>
+              <option value="Autumn">Autumn</option>
+              <option value="Spring">Spring</option>
+              <option value="Summer">Summer</option>
+              <option value="Winter">Winter</option>
+            </select>
+          </div>
+          <!-- Preferred Travel Type -->
+          <div class="col-md-6">
+            <label for="preferred_travel_type" class="form-label">Preferred Travel Type</label>
+            <select class="form-select" id="preferred_travel_type" name="preferred_travel_type">
+              <option selected disabled>Choose...</option>
+              <option value="Mountains">Mountains</option>
+              <option value="Desert">Desert</option>
+              <option value="City">City</option>
+              <option value="Coastal">Coastal</option>
+            </select>
+          </div>
+          <!-- Age Range -->
+          <div class="col-md-6">
+            <label for="age_range" class="form-label">Age Range</label>
+            <input type="text" class="form-control" id="age_range" name="age_range" placeholder="e.g., 18-30">
+          </div>
+          <!-- Budget Range -->
+          <div class="col-md-6">
+            <label for="budget_range" class="form-label">Budget Range (PKR)</label>
+            <input type="text" class="form-control" id="budget_range" name="budget_range" placeholder="e.g., 500 - 1000">
+          </div>
+          <!-- Profile Picture -->
+          <div class="col-md-6">
+            <label for="profile_picture" class="form-label">Profile Picture</label>
+            <input type="file" class="form-control" id="profile_picture" name="profile_picture">
+          </div>
+          <!-- Password -->
+          <div class="col-md-6">
+            <label for="password1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password1" name="password1" placeholder="Enter your password">
+          </div>
+          <!-- Confirm Password -->
+          <div class="col-md-6">
+            <label for="password2" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password">
+          </div>
+          <!-- Simple Captcha Field -->
+          <div class="col-12">
+            {{ form.captcha }}
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <button type="reset" class="btn btn-reset">Reset</button>
+          </div>
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+          </div>
+        </div>
+      </form>
+      <div class="form-footer mt-3">
+        <p>Already have an account? <a href="/users/login/">Log in</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pakistan Tourist Guide - XYZ Technologies</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="tourism, travel, Pakistan tours, guide">
+  <meta name="description" content="Discover the best destinations in Pakistan with our online tourist guide. Explore scenic valleys, historic sites, and cultural experiences.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome & Bootstrap Icons -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Third-Party Libraries -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/css/lightbox.min.css"/>
+  <link href="{% static 'css/owl.carousel.min.css' %}" rel="stylesheet">
+
+  <!-- Bootstrap Stylesheet -->
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom Template Styles -->
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+<!-- jQuery (Load First) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap Bundle JS (Load After jQuery) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    /* Top Bar */
+    .topbar-height { height: 45px; }
+
+    /* Carousel */
+    .carousel-letter-spacing { letter-spacing: 3px; }
+    .carousel-maxwidth { max-width: 900px; }
+
+    /* Search Bar */
+    .search-bar-bg { background: rgba(19, 53, 123, 0.8); }
+    .search-bar-position { position: relative; top: -50%; transform: translateY(-50%); }
+
+    /* Diagonal Border */
+    .diagonal-border {
+      border-top: 50px solid transparent;
+      border-right: 50px solid #13357B;
+      border-bottom: 50px solid transparent;
+      border-left: 50px solid #13357B;
+    }
+
+    /* About Section Overlay */
+    .about-overlay {
+      background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
+                  url("{% static 'img/about-img-1.png' %}") center/cover no-repeat;
+    }
+
+    /* Destination & Search Icon */
+    .destination-img { position: relative; }
+    .search-icon { position: absolute; top: 10px; right: 10px; }
+
+
+
+    /* Active Season Button */
+    .filter-btn.active {
+      background-color: #002147 !important;
+      color: white !important;
+      border: none;
+    }
+
+    /* Cards */
+    .container { margin-top: 30px; }
+    .card {
+      margin-bottom: 20px;
+      transition: transform 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body>
+    
+
+  <!-- Spinner Start -->
+  <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+ <!-- Topbar Start -->
+<div class="container-fluid bg-primary px-5 d-none d-lg-block">
+  <div class="row gx-0">
+      <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+          <!-- Optional: Add social media links here -->
+      </div>
+      <div class="col-lg-4 text-center text-lg-end">
+          <div class="d-inline-flex align-items-center" style="height: 45px;">
+              {% if user.is_authenticated %}
+                  <span class="text-light me-3">
+                      Welcome, <strong>
+                          {% if user.mobile_number %}
+                              {{ user.mobile_number }}
+                          {% else %}
+                              {{ user.username }}
+                          {% endif %}
+                      </strong>
+                  </span>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".mark-as-read").forEach(item => {
+            item.addEventListener("click", function(event) {
+                event.preventDefault();
+                let notificationId = this.getAttribute("data-id");
+
+                fetch(`/users/mark-notification/${notificationId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "ok") {
+                        document.getElementById(`notification-${notificationId}`).style.display = "none";
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+                  <!-- Profile Dropdown -->
+                  <div class="dropdown ms-2">
+                      <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown">
+                          {% if user.profile_picture %}
+                              <img src="{{ user.profile_picture.url }}" alt="Profile"
+                                   style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px;">
+                          {% else %}
+                              <img src="{% static 'img/default_avatar.png' %}" alt="Default Avatar"
+                                   style="width: 40px; height: 40px; border-radius: 50%; margin-right: 5px;">
+                          {% endif %}
+                          <small>My Profile</small>
+                      </a>
+                      <div class="dropdown-menu rounded">
+                          
+                          <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="dropdown-item text-danger">
+                                  <i class="fas fa-sign-out-alt me-2"></i> Logout
+                              </button>
+                          </form>
+                      </div>
+                  </div>
+              {% else %}
+                  <a href="{% url 'register' %}" class="btn btn-sm btn-outline-light me-3">
+                      <i class="fa fa-user me-2"></i> Register
+                  </a>
+                  <a href="{% url 'login' %}" class="btn btn-sm btn-light">
+                      <i class="fa fa-sign-in-alt me-2"></i> Login
+                  </a>
+              {% endif %}
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+
+ <!-- Navbar & Hero Start -->
+<div class="container-fluid position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+        <a href="#" class="navbar-brand p-0">
+            <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Pakistan Tours</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto py-0 align-items-center d-flex">
+                <a href="#home" class="nav-item nav-link active">Home</a>
+                <a href="#about-us" class="nav-item nav-link">About Us</a>
+                <a href="#destinations" class="nav-item nav-link">Destinations</a>
+            
+            </div>
+            
+        </div>
+    </nav>
+</div>
+
+    <!-- Carousel Start -->
+    <div class="carousel-header">
+      <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-bs-target="#carouselId" data-bs-slide-to="0" class="active"></li>
+          <li data-bs-target="#carouselId" data-bs-slide-to="1"></li>
+          <li data-bs-target="#carouselId" data-bs-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner" role="listbox">
+          <div class="carousel-item active">
+            <img src="{% static 'img/destination-9.jpg' %}" class="img-fluid" alt="Slide 1">
+            <div class="carousel-caption">
+              <div class="p-3 carousel-maxwidth">
+                <h4 class="text-white text-uppercase fw-bold mb-4 carousel-letter-spacing">Explore Pakistan</h4>
+                <h1 class="display-2 text-capitalize text-white mb-4">Explore Pakistan Together!</h1>
+                <p class="mb-5 fs-5">Experience the rich heritage and natural beauty of Pakistan—from majestic mountains to vibrant cities.</p>
+                <div class="d-flex align-items-center justify-content-center">
+                  <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/photo-2.jpg' %}" class="img-fluid" alt="Slide 2">
+            <div class="carousel-caption">
+              <div class="p-3 carousel-maxwidth">
+                <h4 class="text-white text-uppercase fw-bold mb-4 carousel-letter-spacing">Explore Pakistan</h4>
+                <h1 class="display-2 text-capitalize text-white mb-4">Find Your Perfect Tour</h1>
+                <p class="mb-5 fs-5">Choose from tours that cater to adventure, culture, and relaxation across Pakistan's diverse landscapes.</p>
+                <div class="d-flex align-items-center justify-content-center">
+                  <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/hunza-2.jpg' %}" class="img-fluid" alt="Slide 3">
+            <div class="carousel-caption">
+              <div class="p-3 carousel-maxwidth">
+                <h4 class="text-white text-uppercase fw-bold mb-4 carousel-letter-spacing">Explore Pakistan</h4>
+                <h1 class="display-2 text-capitalize text-white mb-4">Where Would You Like To Go?</h1>
+                <p class="mb-5 fs-5">From the scenic valleys of Hunza to the cultural heartbeat of Lahore, your next adventure awaits.</p>
+                <div class="d-flex align-items-center justify-content-center">
+                  <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" href="#">Discover Now</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon btn bg-primary" aria-hidden="false"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+          <span class="carousel-control-next-icon btn bg-primary" aria-hidden="false"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    <!-- Carousel End -->
+  </div>
+
+  <!-- Search Bar Start -->
+  <div class="container-fluid search-bar-position">
+    <div class="container">
+      <div class="position-relative rounded-pill w-100 mx-auto p-5 search-bar-bg">
+        <input class="form-control border-0 rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Eg: Lahore">
+        <button type="button" class="btn btn-primary rounded-pill py-2 px-4 position-absolute me-2" style="top: 50%; right: 46px; transform: translateY(-50%);">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Search Bar End -->
+
+  <!-- About Us Start -->
+  <div class="container-fluid about py-5" id="about-us">
+    <div class="container py-5">
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-5">
+          <div class="h-100 diagonal-border">
+            <img src="{% static 'img/pexels-mikhail-nilov-7820311.jpg' %}" class="img-fluid w-100 h-100" alt="About Pakistan Tours">
+          </div>
+        </div>
+        <div class="col-lg-7 about-overlay">
+          <h5 class="section-about-title pe-3">About Us</h5>
+          <h1 class="mb-4">Welcome to <span class="text-primary">Pakistan Tours</span></h1>
+          <p>
+            Discover the vibrant culture and breathtaking landscapes of Pakistan with our expertly curated tours.
+            Whether you're exploring ancient forts in the north or vibrant bazaars in the south, our guides help you uncover the hidden gems of this extraordinary country.
+          </p>
+          <p>
+            Our travel platform provides insider tips, detailed itineraries, and personalized recommendations to ensure your journey is unforgettable.
+            Experience everything Pakistan has to offer—from majestic mountain retreats to the rich heritage of its historic cities.
+          </p>
+          <ul>
+            <li>Scenic Flights & Helicopter Tours</li>
+            <li>Handpicked Luxury Hotels</li>
+            <li>5-Star Accommodations</li>
+            <li>Modern, Comfortable Transportation</li>
+            <li>Over 150 Curated City Tours</li>
+            <li>24/7 Dedicated Customer Support</li>
+          </ul>
+          <a class="btn btn-primary rounded-pill py-3 px-5 mt-2" href="#">Read More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- About Us End -->
+</ul>
+
+    
+
+
+<!-- jQuery & Bootstrap JavaScript -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- AJAX for Modal Content -->
+<script>
+    $(document).ready(function() {
+    $(document).on("click", ".view-detail", function() {
+        var itemId = $(this).data("id");
+        var itemType = $(this).data("type");
+        var url = "";
+
+        if (itemType === "activity") {
+            url = "/activities/api/" + itemId + "/";  
+        } else if (itemType === "event") {
+            url = "/events/api/" + itemId + "/";  
+        }
+
+        $.ajax({
+            url: url,
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $("#modal-title").text(data.name || data.title || "No Title");
+                $("#modal-location").text(data.location || "Unknown");
+
+                let dateText = data.date || (data.start_date && data.end_date ? data.start_date + " - " + data.end_date : "No date available");
+                $("#modal-date").text(dateText);
+
+                $("#modal-description").text(data.description || "No description available");
+
+                if (data.image_url) {
+                    $("#modal-image").attr("src", data.image_url).show();
+                } else {
+                    $("#modal-image").attr("src", "/static/images/default.png").show();  // Fallback image
+                }
+
+                $("#detailsModal").modal("show");
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                alert("Error fetching details.");
+            }
+        });
+    });
+});
+
+</script>
+
+
+
+<!-- Destination Section Start -->
+<div class="container-fluid destinations py-5" id="destinations">
+  <div class="container py-5">
+    <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+      <h5 class="section-title px-3">Destinations</h5>
+      <h1 class="mb-0">Popular Destinations in Pakistan by Seasons</h1>
+    </div>
+
+    <!-- Tab Navigation -->
+  <ul class="nav nav-pills mb-5 justify-content-center" id="pills-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active btn btn-outline-primary me-2" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab">All</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link btn btn-outline-warning me-2" id="autumn-tab" data-bs-toggle="pill" data-bs-target="#autumn" type="button" role="tab">Autumn</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link btn btn-outline-success me-2" id="spring-tab" data-bs-toggle="pill" data-bs-target="#spring" type="button" role="tab">Spring</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link btn btn-outline-danger me-2" id="summer-tab" data-bs-toggle="pill" data-bs-target="#summer" type="button" role="tab">Summer</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link btn btn-outline-info me-2" id="winter-tab" data-bs-toggle="pill" data-bs-target="#winter" type="button" role="tab">Winter</button>
+  </li>
+</ul>
+
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+
+      <!-- All Tab -->
+      <div class="tab-pane fade show active" id="all" role="tabpanel">
+        <div class="row">
+          {% for destination in all_destinations %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                {% if destination.image %}
+                  <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+                {% else %}
+                  <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ destination.name }}</h5>
+                  <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Autumn Tab -->
+      <div class="tab-pane fade" id="autumn" role="tabpanel">
+        <div class="row">
+          {% for destination in autumn_destinations %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                {% if destination.image %}
+                  <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+                {% else %}
+                  <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ destination.name }}</h5>
+                  <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p>No destinations available for Autumn.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Spring Tab -->
+      <div class="tab-pane fade" id="spring" role="tabpanel">
+        <div class="row">
+          {% for destination in spring_destinations %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                {% if destination.image %}
+                  <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+                {% else %}
+                  <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ destination.name }}</h5>
+                  <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p>No destinations available for Spring.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Summer Tab -->
+      <div class="tab-pane fade" id="summer" role="tabpanel">
+        <div class="row">
+          {% for destination in summer_destinations %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                {% if destination.image %}
+                  <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+                {% else %}
+                  <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ destination.name }}</h5>
+                  <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p>No destinations available for Summer.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Winter Tab -->
+      <div class="tab-pane fade" id="winter" role="tabpanel">
+        <div class="row">
+          {% for destination in winter_destinations %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                {% if destination.image %}
+                  <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+                {% else %}
+                  <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+                {% endif %}
+                <div class="card-body">
+                  <h5 class="card-title">{{ destination.name }}</h5>
+                  <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p>No destinations available for Winter.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Destination Section End -->
+<!-- Top Rated Destinations -->
+<div class="container-fluid py-5 bg-light">
+  <div class="container">
+    <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+      <h5 class="section-title px-3">Top Rated</h5>
+      <h2 class="mb-4">Highly Reviewed Destinations</h2>
+    </div>
+    <div class="row">
+      {% for destination in top_rated_destinations %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            {% if destination.image %}
+              <img src="{{ destination.image.url }}" class="card-img-top" alt="{{ destination.name }}">
+            {% else %}
+              <img src="/static/default_image.jpg" class="card-img-top" alt="{{ destination.name }}">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ destination.name }}</h5>
+              <p class="card-text">{{ destination.description|truncatewords:20 }}</p>
+              <p class="text-muted">⭐ {{ destination.average_rating }}/5</p>
+
+              {% with destination.reviews.all|slice:":1" as latest_review %}
+                {% for review in latest_review %}
+                  <hr>
+                  <p><strong>{{ review.user.username }}</strong>: "{{ review.comment|truncatewords:12 }}"</p>
+                {% endfor %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-center">No top-rated destinations yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+        <!-- Subscribe Start -->
+        <div class="container-fluid subscribe py-5">
+            <div class="container text-center py-5">
+                <div class="mx-auto text-center" style="max-width: 900px;">
+                    <h5 class="subscribe-title px-3">Subscribe</h5>
+                    <h1 class="text-white mb-4">Our Newsletter</h1>
+                    <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
+                    </p>
+                    <div class="position-relative mx-auto">
+                        <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                        <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Subscribe End -->
+
+        <!-- Footer Start -->
+        <div class="container-fluid footer py-5">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Get In Touch</h4>
+                            <a href=""><i class="fas fa-home me-2"></i> 123 Street, New York, USA</a>
+                            <a href=""><i class="fas fa-envelope me-2"></i> info@example.com</a>
+                            <a href=""><i class="fas fa-phone me-2"></i> +012 345 67890</a>
+                            <a href="" class="mb-3"><i class="fas fa-print me-2"></i> +012 345 67890</a>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-share fa-2x text-white me-2"></i>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-facebook-f"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-twitter"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-instagram"></i></a>
+                                <a class="btn-square btn btn-primary rounded-circle mx-1" href=""><i class="fab fa-linkedin-in"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Company</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> About</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Careers</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Blog</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Press</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Gift Cards</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Magazine</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item d-flex flex-column">
+                            <h4 class="mb-4 text-white">Support</h4>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Contact</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Legal Notice</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Terms and Conditions</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Sitemap</a>
+                            <a href=""><i class="fas fa-angle-right me-2"></i> Cookie policy</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xl-3">
+                        <div class="footer-item">
+                            <div class="row gy-3 gx-2 mb-4">
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">Arabic</option>
+                                                <option value="2">German</option>
+                                                <option value="3">Greek</option>
+                                                <option value="3">New York</option>
+                                            </select>
+                                            <label for="select1">English</label>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-xl-6">
+                                    <form>
+                                        <div class="form-floating">
+                                            <select class="form-select bg-dark border" id="select1">
+                                                <option value="1">USD</option>
+                                                <option value="2">EUR</option>
+                                                <option value="3">INR</option>
+                                                <option value="3">GBP</option>
+                                            </select>
+                                            <label for="select1">$</label>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <h4 class="text-white mb-3">Payments</h4>
+                            <div class="footer-bank-card">
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-amex fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-visa fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fas fa-credit-card fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-mastercard fa-2x"></i></a>
+                                <a href="#" class="text-white me-2"><i class="fab fa-cc-paypal fa-2x"></i></a>
+                                <a href="#" class="text-white"><i class="fab fa-cc-discover fa-2x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+        
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright text-body py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-end mb-md-0">
+                        <i class="fas fa-copyright me-2"></i><a class="text-white" href="#">Travel Guide</a>, All right reserved.
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- jQuery (Not always needed but useful for debugging) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static '/js/easing.min.js' %}"></script>
+<script src="{% static '/js/waypoints.min.js' %}"></script>
+<script src="{% static '/js/owl.carousel.min.js' %}"></script>
+<script src="{% static '/js/lightbox.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/js/lightbox.min.js"></script>
+<!-- Template Javascript -->
+<script src="{% static 'js/main.js' %}"></script>
+
+    </body>
+
+</html>

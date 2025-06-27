@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ destination.name }} - Details</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+  <style>
+    #map { height: 300px; }
+    .photo { width: 100%; max-height: 250px; object-fit: cover; }
+    .star { color: gold; font-size: 18px; }
+    .star-empty { color: lightgray; font-size: 18px; }
+    .card-custom { border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+<div class="container py-4">
+
+  <!-- Destination Info -->
+  <h1 class="display-4 text-primary mb-3">{{ destination.name }}</h1>
+  <p class="lead">{{ destination.description }}</p>
+  <p><strong>Best Season:</strong> {{ destination.season }}</p>
+
+  {% if distance_km %}
+    <p><strong>📍 Distance from you:</strong> {{ distance_km }} km</p>
+  {% endif %}
+
+  <img src="{{ destination.image.url }}" class="img-fluid rounded shadow mb-4" alt="{{ destination.name }}">
+
+  <!-- Map -->
+  {% if destination.latitude and destination.longitude %}
+  <h4 class="mb-3">📍 Location Map</h4>
+  <div id="map" class="rounded mb-4"></div>
+  {% else %}
+  <p class="text-danger">⚠️ Location data missing. Map cannot be displayed.</p>
+  {% endif %}
+
+  <!-- Activities -->
+  <h3 class="mt-5 mb-3">🎯 Upcoming Activities</h3>
+  {% for activity in activities %}
+  <div class="card card-custom mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ activity.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ activity.start_date }}</h6>
+      <p class="card-text">{{ activity.description }}</p>
+    </div>
+  </div>
+  {% empty %}
+  <p>No upcoming activities.</p>
+  {% endfor %}
+
+  <!-- Events -->
+  <h3 class="mt-5 mb-3">📅 Upcoming Events</h3>
+  {% for event in events %}
+  <div class="card card-custom mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ event.title }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">{{ event.start_date }} to {{ event.end_date }}</h6>
+      <p class="card-text">{{ event.description }}</p>
+    </div>
+  </div>
+  {% empty %}
+  <p>No upcoming events.</p>
+  {% endfor %}
+
+  <!-- Calendar -->
+  <h3 class="mt-5 mb-3">🗓️ Event Calendar</h3>
+  <div id="calendar" class="mb-5"></div>
+
+  <!-- Reviews -->
+  <h3 class="mt-5 mb-3">⭐ Reviews</h3>
+  <p><strong>Average Rating:</strong>
+    {% for i in "12345" %}
+      {% if forloop.counter <= destination.average_rating %}
+        <span class="star">&#9733;</span>
+      {% else %}
+        <span class="star-empty">&#9733;</span>
+      {% endif %}
+    {% endfor %}
+    ({{ destination.average_rating|floatformat:1 }}/5)
+  </p>
+
+  {% for review in reviews %}
+  <div class="card card-custom mb-3">
+    <div class="card-body">
+      <strong>{{ review.user }}</strong><br>
+      {% for i in "12345" %}
+        {% if forloop.counter <= review.rating %}
+          <span class="star">&#9733;</span>
+        {% else %}
+          <span class="star-empty">&#9733;</span>
+        {% endif %}
+      {% endfor %}
+      <p class="mt-2">{{ review.comment }}</p>
+    </div>
+  </div>
+  {% empty %}
+  <p>No reviews yet.</p>
+  {% endfor %}
+
+  {% if user.is_authenticated %}
+  <h4 class="mt-4">📝 Leave a Review</h4>
+  <form method="post" class="mb-5">
+    {% csrf_token %}
+    <input type="hidden" name="submit_review" value="1">
+    <div class="form-group">
+      <label for="rating">Rating (1-5):</label>
+      <input type="number" min="1" max="5" name="rating" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="comment">Comment:</label>
+      <textarea name="comment" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+  </form>
+  {% else %}
+  <p><a href="{% url 'login' %}">Login</a> to leave a review.</p>
+  {% endif %}
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+{% if destination.latitude and destination.longitude %}
+    var destinationLat = {{ destination.latitude }};
+    var destinationLng = {{ destination.longitude }};
+    var map = L.map('map').setView([destinationLat, destinationLng], 8);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
+
+    var destMarker = L.marker([destinationLat, destinationLng]).addTo(map)
+        .bindPopup('{{ destination.name }}').openPopup();
+
+    // Get user's current location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLng = position.coords.longitude;
+
+            var userMarker = L.marker([userLat, userLng]).addTo(map)
+                .bindPopup("You are here").openPopup();
+
+            // Draw a line from user to destination
+            var latlngs = [[userLat, userLng], [destinationLat, destinationLng]];
+            var polyline = L.polyline(latlngs, {color: 'blue'}).addTo(map);
+
+            // Calculate distance using Haversine formula
+            var R = 6371; // km
+            var dLat = (destinationLat - userLat) * Math.PI / 180;
+            var dLng = (destinationLng - userLng) * Math.PI / 180;
+            var a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(userLat * Math.PI / 180) * Math.cos(destinationLat * Math.PI / 180) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var distance = R * c;
+
+            // Add popup with distance
+            L.popup()
+             .setLatLng([(userLat + destinationLat)/2, (userLng + destinationLng)/2])
+             .setContent("Distance to destination: " + distance.toFixed(2) + " km")
+             .openOn(map);
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+{% endif %}
+</script>
+
+</body>
+</html>

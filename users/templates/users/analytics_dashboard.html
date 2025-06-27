@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Travel Analytics Dashboard</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <link href="{% static 'css/bootstrap1.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    canvas {
+      max-height: 280px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      <div>
+        <h2 class="fw-bold text-primary">📊 Travel Analytics Dashboard</h2>
+        <p class="text-muted mb-0">Insights based on your travel activity</p>
+      </div>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary rounded-pill">← Back to Dashboard</a>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-6">
+        <div class="card shadow-sm rounded-3 p-4">
+          <h6 class="text-muted mb-3">📈 Seasonal Booking Trends</h6>
+          <canvas id="seasonChart"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm rounded-3 p-4">
+          <h6 class="text-muted mb-3">⭐ Destination Ratings</h6>
+          <canvas id="ratingChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Favorite Destinations -->
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm rounded-3 p-4 h-100">
+          <h5 class="text-primary fw-bold mb-3">💖 Your Favorite Destinations</h5>
+
+          <h6 class="text-muted mt-2">🏆 Top Rated Places</h6>
+          {% for place in top_rated %}
+            <div class="mb-2">
+              <strong class="text-capitalize">{{ place.name }}</strong><br>
+              <span class="text-warning">
+                {% for _ in "12345"|slice:":place.avg_rating"|make_list %}★{% endfor %}
+              </span>
+            </div>
+          {% empty %}
+            <p class="text-muted">No top rated places yet.</p>
+          {% endfor %}
+
+          <h6 class="text-muted mt-4">📍 Most Visited Places</h6>
+          {% for dest, count in most_visited %}
+            <div class="d-flex justify-content-between">
+              <span>{{ dest.name }}</span>
+              <span class="text-muted small">{{ count }} visits</span>
+            </div>
+            <a href="https://maps.google.com/?q={{ dest.name }}" target="_blank" class="text-primary small">→ View on map</a>
+          {% empty %}
+            <p class="text-muted">No visit data available.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="col-md-6">
+        <div class="card shadow-sm rounded-3 p-4 h-100">
+          <h5 class="text-primary fw-bold">🎯 Personalized Recommendations</h5>
+          <p class="mt-3">Based on your saved trips, we think you'll enjoy these destinations:</p>
+          {% if personalized_recommendations %}
+            <ul class="mb-0">
+              {% for rec in personalized_recommendations %}
+                <li class="mb-2">✨ <strong>{{ rec }}</strong></li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-muted">Start saving trips to get personalized destination suggestions.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const seasonCtx = document.getElementById('seasonChart').getContext('2d');
+    new Chart(seasonCtx, {
+      type: 'line',
+      data: {
+        labels: ['Autumn', 'Summer', 'Winter'],
+        datasets: [{
+          label: 'Bookings',
+          data: [{{ season_data.autumn|default:0 }}, {{ season_data.summer|default:0 }}, {{ season_data.winter|default:0 }}],
+          backgroundColor: 'rgba(0, 123, 255, 0.2)',
+          borderColor: '#007bff',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+    new Chart(ratingCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{
+          data: [{{ rating_data.high|default:0 }}, {{ rating_data.medium|default:0 }}, {{ rating_data.low|default:0 }}],
+          backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: '70%',
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  </script>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
+
+</body>
+</html>

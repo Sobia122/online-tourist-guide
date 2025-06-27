@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Travel Tips</h2>
+    <a href="{% url 'tip_create' %}">Add New Tip</a>
+    <ul>
+        {% for tip in tips %}
+            <li>
+                <a href="{% url 'tip_detail' tip.pk %}">{{ tip.title }}</a> ({{ tip.season }}, {{ tip.tip_type }})
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
